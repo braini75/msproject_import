@@ -124,6 +124,7 @@ class MsprojImpController < ApplicationController
     parent_id = 0
     root_task_id = 0
     last_outline_level = 0
+    parent_stack = Array.new #contains a LIFO-stack of parent task
         
     @tasks.each do |task|
       begin              
@@ -154,18 +155,24 @@ class MsprojImpController < ApplicationController
         issue.root_id = root_task_id
         if task.outline_level > last_outline_level # new subtask
           parent_id = last_task_id           
+          parent_stack.push(parent_id)          
         end
+
+        if task.outline_level < last_outline_level # step back in hierachy
+          steps=last_outline_level-task.outline_level
+          parent_stack.pop(steps)  
+          parent_id=parent_stack.last
+        end 
         
         issue.parent_id = parent_id 
       end
       
       last_outline_level = task.outline_level
                         
-      if issue.save
-        logger.info "New issue #{task.name} in Project: #{@project} created!"
-        parent_task_id = 0
+      if issue.save        
         last_task_id = issue.id
-        root_task_id = issue.id if task.outline_level == 0     
+        root_task_id = issue.id if task.outline_level == 0
+        logger.info "New issue #{task.name} in Project: #{@project} created!" 
         flash[:notice] = "Project successful inserted!"        
       else
         iss_error = issue.errors.full_messages
