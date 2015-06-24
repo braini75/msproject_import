@@ -1,0 +1,17 @@
+= Redmine-Plugin: XML-Import for MS Project
+== Requirement 
+Redmine 2.x
+
+== Installation
+1. go to `{REDMINE_ROOT}/vendor/plugin` directory.
+2. `git clone https://github.com/braini75/msproject_import.git`
+2. `rake redmine:plugins:migrate RAILS_ENV=production`
+3. Restart the redmine service. `service apache2 restart`
+4. enjoy!
+
+
+== Usage
+1. Export your MS Project data to XML
+2. access a redmine project, then click "MS Project Import" tab
+3. select xml file, and click "Analyze" button
+4. If there is any warning, make sure you create and assign missing users to you project and start over

@@ -1,0 +1,11 @@
+<h2>Ms Project Import plugin - Home <%= @project.name %></h2> 
+
+<%= form_tag({:controller => 'msproj_imp', :action => 'upload', :project_id => @project}, :multipart => true) do %>
+<%= file_field_tag 'uploaded_file' %>
+<%= submit_tag l(:button_analyze) %>
+<% end %>
+<h3>Current Users</h3>
+<% User.all.each do |user| %>
+Vorname: <%= user.firstname %> Nachname:<%= user.lastname %><br>
+<% end %>
+Special: <%= User.where("firstname LIKE ? AND lastname LIKE ?", '%Thomas%','%Koch%').first %>

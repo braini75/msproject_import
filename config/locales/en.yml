@@ -1,0 +1,17 @@
+# English strings go here for Rails i18n
+en:
+  # my_label: "My label"
+  menu_caption: "MS Project Import"
+  project_title: "Name of the Project"
+  resources_tag: "Resources"
+  task_tag: "Tasks"
+  assignment_tag: "Assignment"
+  button_analyze: "Analyze"
+  button_import: "Import"
+  assignedto_auto: "Will assigned to"
+  assignedto_manuel: "Assign to other Member of Project"
+  xml_assignment:   "Assignment in MS Project"
+  user_imp_status_1: "User found."
+  user_imp_status_2: "User not Member of Project."
+  user_imp_status_3: "User not found."
+  no_failed_mapping: "%{count} Users missing or not in project! Please resolve manually."
