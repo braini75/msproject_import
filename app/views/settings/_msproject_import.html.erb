@@ -1,0 +1,14 @@
+<%
+# This file provides configuration options for the workload plugin.
+%>
+<table>
+  <tbody>
+    <tr>
+      <th><%= l(:settings_tracker_caption)%></th>
+      <td>
+      	<%= select_tag 'settings[tracker_default]', options_for_select(Tracker.all.collect {|t| [ t.name, t.id ] }, settings['tracker_default'])%>
+      </td>
+      <td><%= l(:settings_tracker_help)%></td>
+    </tr>
+  </tbody>
+</table>

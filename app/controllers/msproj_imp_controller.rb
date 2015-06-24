@@ -9,6 +9,10 @@ class MsprojImpController < ApplicationController
   
   def upload
     flash.clear
+  end 
+  
+  def import_results
+    
   end
   
   def init_file
@@ -128,7 +132,7 @@ class MsprojImpController < ApplicationController
         :project  => @project
         )
       issue.status_id = 1   # 1-neu
-      issue.tracker_id = 2  # 1-Bug, 2-Feature...
+      issue.tracker_id = Setting.plugin_msproject_import['tracker_default']  # 1-Bug, 2-Feature...
       
       issue.subject = @title
       if task.task_id > 0
@@ -162,7 +166,7 @@ class MsprojImpController < ApplicationController
         parent_task_id = 0
         last_task_id = issue.id
         root_task_id = issue.id if task.outline_level == 0     
-        flash[:notice] = "Project successful inserted!"   
+        flash[:notice] = "Project successful inserted!"        
       else
         iss_error = issue.errors.full_messages
         logger.info "Issue #{task.name} in Project: #{@project} gives Error: #{iss_error}"
@@ -174,7 +178,8 @@ class MsprojImpController < ApplicationController
         flash[:error] = "Error: #{ex.to_s}" 
       return
       end
-    end            
+    end 
+    redirect_to :action => 'import_results' #, :param => :project_id           
     
   end
   
