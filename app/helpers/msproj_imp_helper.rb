@@ -1,5 +1,15 @@
 
 module MsprojImpHelper  
+  def issue_deep(issue)
+	  @cnt_deep=0
+	  if issue.parent_id.nil?
+		   return @cnt_deep
+		else
+		 parent=Issue.find(issue.parent_id)
+		 @cnt_deep=1 + issue_deep(parent)
+	  end
+  end
+
   def xml_resources resources
       resource = MsprojResource.new
       id = resources.elements['UID']

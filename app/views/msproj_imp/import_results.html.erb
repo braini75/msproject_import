@@ -8,39 +8,29 @@ Alle Aufgaben wurden importiert unter: <%= link_to "#{issue.subject}(#{issue.id}
 	<b><%= l(:project_title)%>:</b> <%= @title %>
 </p>
 <p>
-<h3>User/Resourcen Mapping</h3>
-<% @usermapping.each do |user| %>
-Resource_ID: <%= user[0]%> Original Name: <%= user[1]%> Map to: <%= user[2]%><br>
-<% end %><p>
-	
-<h3><%= l(:assignment_tag)%></h3>
-
-<table>
+<h3>Imported Tasks:</h3>
+<% issues = Issue.select{ |issue| issue.root_id == params[:root_task].to_i}.map %>
+<table class="list">
 	<tr>
 		<th><%= l(:task_tag)%></th>
-		<th><%= l(:xml_assignment)%></th>
-		<th><%= l(:assignedto_auto)%></th>
+		<th>assigned to</th>
 		<th>Info</th>
 	</tr>
-	<% 
-#	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
-	@assignments.each do |assign| 
-		task = @tasks.select { |task| task.task_id == assign.task_uid}
-		assigned_to = @usermapping.select {|id, user| id == assign.resource_uid}[0]
-		
+	<%
+	issues.each do |task|
+		if task.assigned_to_id.nil?
+			user="Not assigned!"
+			css_td="warning"
+		else
+			css_td="success"
+			user=User.find(task.assigned_to_id)
+		end
 	%>
-	<tr>
-		<td><%= task[0].name %></td>
-		<td><%= assigned_to[1] %></td>
-		<td><%= assigned_to[2].name unless assigned_to[3]>2 %></td>
-		<td><%= I18n.t('user_imp_status_' + assigned_to[3].to_s)%></td>
-	</tr>	
-	<% end %>
+	<tr class="issue idnt idnt-<%=issue_deep(task)%>">
+		<td class="subject"><%= link_to "#{task.subject}(#{task.id})", { :controller => "issues", :action => "show", :id => task} %></td>
+		<td class="assigned_to <%=css_td%>"><%= user%></td>
+		<td></td>
+	</tr>
+	<%end%>
 </table>
-<% end %>
-<p>
-<h3><%= l(:task_tag)%></h3>
-<% @tasks.each do |task| %>
-<%= task.name %> WBS:<%= task.wbs %><br>
-<% end %>
-</p> 
+</p>
