@@ -25,7 +25,7 @@ Resource_ID: <%= user[0]%> Original Name: <%= user[1]%> Map to: <%= user[2]%><br
 		<th>Info</th>
 	</tr>
 	<% 
-	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
+#	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
 	@assignments.each do |assign| 
 		task = @tasks.select { |task| task.task_id == assign.task_uid}
 		assigned_to = @usermapping.select {|id, user| id == assign.resource_uid}[0]
