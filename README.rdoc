@@ -1,12 +1,12 @@
 = Redmine-Plugin: XML-Import for MS Project
 == Requirement 
-Redmine 2.x
+Redmine 2.x, 3.x
 
 == Installation
 1. go to `{REDMINE_ROOT}/plugin` directory.
 2. `git clone https://github.com/braini75/msproject_import.git`
 2. `rake redmine:plugins:migrate RAILS_ENV=production`
-3. Restart the redmine service. `service apache2 restart`
+3. Restart the redmine service. E.g. `service apache2 restart`
 4. enjoy!
 
 
