@@ -3,7 +3,7 @@ class MsprojImpController < ApplicationController
   require 'rexml/document'
   require 'date'
   
-  before_filter :find_project, :only => [:analyze, :upload]
+  before_filter :find_project, :only => [:analyze, :upload, :import_results]
   
   include MsprojImpHelper
   
@@ -135,9 +135,19 @@ class MsprojImpController < ApplicationController
       issue.status_id = 1   # 1-neu
       issue.tracker_id = Setting.plugin_msproject_import['tracker_default']  # 1-Bug, 2-Feature...
       
-      issue.subject = @title
+      
       if task.task_id > 0
         issue.subject = task.name
+        assign=@assignments.select{|as| as.task_uid == task.task_id}.first
+        unless assign.nil? 
+          logger.info("Assign: #{assign}")
+          mapped_user=@usermapping.select { |id, name, user_obj, status| id == assign.resource_uid and status < 3}.first
+          logger.info("Mapped User: #{mapped_user}")
+          issue.assigned_to_id  = mapped_user[2].id unless mapped_user.nil?
+          
+        end
+      else
+        issue.subject = @title              
       end
 
       issue.start_date = task.start_date
@@ -148,7 +158,7 @@ class MsprojImpController < ApplicationController
       issue.priority_id = task.priority_id
       issue.done_ratio = task.done_ratio     
       issue.description = task.notes
-      
+
       # subtask?      
       
       if task.outline_level > 0
@@ -186,7 +196,7 @@ class MsprojImpController < ApplicationController
       return
       end
     end 
-    redirect_to :action => 'import_results' #, :param => :project_id           
+    redirect_to :action => 'import_results', :project_id => @project, :root_task => root_task_id          
     
   end
   

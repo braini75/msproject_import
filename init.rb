@@ -7,6 +7,6 @@ Redmine::Plugin.register :msproject_import do
   author_url 'https://github.com/braini75'
   
   settings :default => {'tracker_default' => 2}, :partial => 'settings/msproject_import'
-  permission :msproject_import, { :msproj_imp => [:upload, :import, :analyze]}
-  menu :project_menu, :msproject_import, { :controller => 'msproj_imp', :action => 'upload' }, :caption => :menu_caption, :after => :settings, :param => :project_id
+  permission :msproject_import, { :msproj_imp => [:upload, :import, :analyze, :import_results]}
+  menu :project_menu, :msproject_import, { :controller => 'msproj_imp', :action => 'upload' }, :caption => :menu_caption, :after => :settings, :param => :project_id  
 end

@@ -1,1 +1,3 @@
 <h2>Ms Project Import plugin - Results:</h2> 
+<% issue = Issue.find(params[:root_task])%>
+Alle Aufgaben wurden importiert unter: <%= link_to "#{issue.subject}(#{issue.id})", { :controller => "issues", :action => "show", :id => issue} %></h2> 

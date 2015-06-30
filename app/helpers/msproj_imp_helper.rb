@@ -8,6 +8,23 @@ module MsprojImpHelper
       resource.name = name.text if name
       return resource    
   end
+  
+  def create_custom_fields
+    IssueCustomField.create(:name => "MS Project WDS", :field_format => 'string') #Beispiel    
+  end
+  
+  def update_custom_fields(issue, fields)
+    f_id = Hash.new { |hash, key| hash[key] = nil }
+    issue.available_custom_fields.each_with_index.map { |f,indx| f_id[f.name] = f.id }
+    field_list = []
+    fields.each do |name, value|
+      field_id = f_id[name].to_s
+      field_list << Hash[field_id, value]
+    end
+    issue.custom_field_values = field_list.reduce({},:merge)
+
+    raise issue.errors.full_messages.join(', ') unless issue.save
+end
 
   def xml_tasks tasks
       task = MsprojTask.new

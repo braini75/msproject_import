@@ -1,6 +1,7 @@
 <p>
 	<%= form_tag({:controller => 'msproj_imp',:id =>'import_form', :action => 'analyze', :project_id => @project, :upload_path => @upload_path, :do_import => 'true'}, :multipart => true) do %>
-	<%= submit_tag l(:button_import) if @no_mapping_found == 0 %>
+<!-- 	<%= submit_tag l(:button_import) if @no_mapping_found == 0 %>-->
+	<%= submit_tag l(:button_import)%>
 	
 </p>
 <h2>MS Project Import Details for <%= @project.name %> </h2>
