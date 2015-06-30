@@ -24,7 +24,7 @@ module MsprojImpHelper
     issue.custom_field_values = field_list.reduce({},:merge)
 
     raise issue.errors.full_messages.join(', ') unless issue.save
-end
+  end
 
   def xml_tasks tasks
       task = MsprojTask.new
@@ -52,15 +52,15 @@ end
       task.outline_level = tasks.elements["OutlineLevel"].text.to_i  
       priority = tasks.elements["Priority"].text
       if priority == "500"
-              task.priority_id = 4
+              task.priority_id = 2  #normal
       elsif priority < "500"
-              task.priority_id = 3
+              task.priority_id = 1  #niedrig
       elsif priority < "750"
-              task.priority_id = 5
+              task.priority_id = 3  #hoch
       elsif priority < "1000"
-              task.priority_id = 6
+              task.priority_id = 4  #dringend
       else
-              task.priority_id = 7
+              task.priority_id = 5  #sofort
       end   
       task.notes=tasks.elements["Notes"].text if tasks.elements["Notes"]
     return task
