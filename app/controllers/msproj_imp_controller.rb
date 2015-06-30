@@ -94,7 +94,7 @@ class MsprojImpController < ApplicationController
           end
         end
         #logger.debug("Mapping Resource: #{resource} UserMapping: #{@usermapping}")
-        @no_mapping_found=@usermapping.select { |id, name, user_obj, status| status.to_i > 1}.count
+        @no_mapping_found=@usermapping.select { |id, name, user_obj, status| status.to_i > 2}.count
         unless @no_mapping_found == 0
           flash[:error] = "Error: #{l(:no_failed_mapping, @no_mapping_found)}"  
         end
