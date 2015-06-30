@@ -12,6 +12,9 @@ Redmine 2.x, 3.x
 
 == Usage
 1. Export your MS Project data to XML
-2. access a redmine project, then click "MS Project Import" tab
+2. access a redmine project, then click "MS Project Import" tab (Make sure you gave permission to the current user).
 3. select xml file, and click "Analyze" button
 4. If there is any warning, make sure you create and assign missing users to you project and start over
+
+== Permissions:
+You can setup permission for "Msproject import"  with the Administration->"Roles and permissions" page. 
