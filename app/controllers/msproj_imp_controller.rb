@@ -187,7 +187,8 @@ class MsprojImpController < ApplicationController
       else
         iss_error = issue.errors.full_messages
         logger.info "Issue #{task.name} in Project: #{@project} gives Error: #{iss_error}"
-        flash[:error] = "Error: #{ex.iss_error}"   
+        flash[:error] = "Error: #{iss_error}"
+        return   
       end
                  
       
