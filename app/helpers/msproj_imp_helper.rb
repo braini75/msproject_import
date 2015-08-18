@@ -33,7 +33,6 @@ module MsprojImpHelper
     end
     issue.custom_field_values = field_list.reduce({},:merge)
 
-    raise issue.errors.full_messages.join(', ') unless issue.save
   end
 
   def xml_tasks tasks

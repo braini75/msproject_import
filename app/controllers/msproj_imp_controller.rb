@@ -31,6 +31,7 @@ class MsprojImpController < ApplicationController
     @resources  = []
     @tasks      = []
     @assignments= []
+    @required_custom_fields=[]
 
     
     if do_import == 'true'
@@ -100,6 +101,14 @@ class MsprojImpController < ApplicationController
         end
       end
             
+            
+      # check for required custom_fields
+      @project.all_issue_custom_fields.each do |custom_field|
+        if custom_field.is_required
+          flash[:warning] = "Required custom field #{custom_field.name} found. We will set them to 'n.a'"
+          @required_custom_fields.push([custom_field.name,'n.a.'])
+        end
+      end
 
       ele.each_element('//Task') do |child|
         @tasks.push(xml_tasks child)
@@ -178,6 +187,9 @@ class MsprojImpController < ApplicationController
       end
       
       last_outline_level = task.outline_level
+      
+      # required custom fields:
+      update_custom_fields(issue, @required_custom_fields)
                         
       if issue.save        
         last_task_id = issue.id

@@ -20,6 +20,8 @@ Task.Name, start_date, finish_date, create_date, duration, done_ratio, priority
 
 
 == Usage
+To use this Plugin you have to enable the module (Project -> Settings -> Modules) in your project.
+
 1. Export your MS Project data to XML
 2. access a redmine project, then click "MS Project Import" tab (Make sure you gave permission to the current user).
 3. select xml file, and click "Analyze" button
