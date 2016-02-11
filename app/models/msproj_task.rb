@@ -14,8 +14,5 @@ class MsprojTask
   attr_accessor :done_ratio
   attr_accessor :priority_id
   attr_accessor :notes
-
-  #def create?
-  #  @create
-  #end
+ 
 end

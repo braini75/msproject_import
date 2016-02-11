@@ -45,12 +45,10 @@ class MsprojImpController < ApplicationController
 
       content = File.read(@upload_path)
 
-      #logger.info content
+      logger.info content
 
       doc     = REXML::Document.new(content)
-
-      root    = doc.root
-      
+                 
       @prefix="MS Project Import(#{Date.today}): "
 
       
@@ -61,23 +59,26 @@ class MsprojImpController < ApplicationController
           flash[:warning] = "No Titel in XML found. I use #{@title} instead!"
           #@title = ele.elements["Name"].text if ele.elements["Name"] 
         else
-          @title = @prefix + ele.elements["Title"].text  
+          @title = @prefix + ele.elements["Title"].text
         end        
 
       ele.each_element('//Resource') do |child|
         @resources.push(xml_resources child)
 #        render :text => "Resource name is: " + child.elements["Name"].text
       end
-
+      
+      logger.info "Ressource passed!"
       
       resource_uids = []
       ele.each_element('//Assignment') do |child|
         assign = MsprojAssignment.new(child)
         if assign.resource_uid >= 0
           resource_uids.push(assign.resource_uid) 
-          @assignments.push(assign)
+#          @assignments.push(assign)
         end         
       end
+      
+      logger.info "Assignment passed!"
       
       @usermapping = []
       
@@ -114,6 +115,7 @@ class MsprojImpController < ApplicationController
         @tasks.push(xml_tasks child)
       end
       
+      logger.info "Task passed!"
 
       end 
 #      redirect_to :action => 'upload'

@@ -33,14 +33,15 @@ module MsprojImpHelper
     end
     issue.custom_field_values = field_list.reduce({},:merge)
 
+    #raise issue.errors.full_messages.join(', ') unless issue.save
   end
 
   def xml_tasks tasks
       task = MsprojTask.new
-      task.task_id = tasks.elements['ID'].text.to_i
-      task.wbs = tasks.elements['WBS'].text
+      task.task_id = tasks.elements['ID'].text.to_i if tasks.elements['ID']
+      task.wbs = tasks.elements['WBS'].text if tasks.elements['WBS']
 #      task.outline_number = tasks.elements['OutlineNumber'].text
-      task.outline_level = tasks.elements['OutlineLevel'].text.to_i
+      task.outline_level = tasks.elements['OutlineLevel'].text.to_i if tasks.elements['OutlineLevel']
       
       name = tasks.elements['Name']
       task.name = name.text if name
@@ -52,25 +53,30 @@ module MsprojImpHelper
       task.finish_date = finish_date.text.split('T')[0] if finish_date
       
       create_date = tasks.elements['CreateDate']
-      date_time = create_date.text.split('T')
-      task.create_date = date_time[0] + ' ' + date_time[1] if start_date
+      date_time = create_date.text.split('T') if create_date
+      task.create_date = date_time[0] + ' ' + date_time[1] if date_time
       #task.create = name ? !(has_task(name.text)) : true
-      duration_arr = tasks.elements["Duration"].text.split("H")
-      task.duration = duration_arr[0][2..duration_arr[0].size-1]         
-      task.done_ratio = tasks.elements["PercentComplete"].text          
-      task.outline_level = tasks.elements["OutlineLevel"].text.to_i  
-      priority = tasks.elements["Priority"].text
-      if priority == "500"
-              task.priority_id = 2  #normal
-      elsif priority < "500"
-              task.priority_id = 1  #niedrig
-      elsif priority < "750"
-              task.priority_id = 3  #hoch
-      elsif priority < "1000"
-              task.priority_id = 4  #dringend
+      
+      duration_arr = tasks.elements["Duration"].text.split("H") if tasks.elements['Duration']
+      task.duration = duration_arr[0][2..duration_arr[0].size-1] if duration_arr   
+      task.done_ratio = tasks.elements["PercentComplete"].text if tasks.elements['PercentComplete']          
+      task.outline_level = tasks.elements["OutlineLevel"].text.to_i if tasks.elements['OutlineLevel']
+      if tasks.elements['Priority']
+        priority = tasks.elements["Priority"].text 
+        if priority == "500"
+                task.priority_id = 2  #normal
+        elsif priority < "500"
+                task.priority_id = 1  #niedrig
+        elsif priority < "750"
+                task.priority_id = 3  #hoch
+        elsif priority < "1000"
+                task.priority_id = 4  #dringend
+        else
+                task.priority_id = 5  #sofort
+        end   
       else
-              task.priority_id = 5  #sofort
-      end   
+        task.priority_id = 2  #normal
+      end
       task.notes=tasks.elements["Notes"].text if tasks.elements["Notes"]
     return task
   end rescue raise 'parse error'
