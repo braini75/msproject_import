@@ -3,43 +3,51 @@
 	<b><%= l(:project_title)%>:</b> <%= @title %>
 </p>
 <p>
-<h3>User Mapping</h3>
-<% @usermapping.each do |user| %>
-	Resource_ID: <%= user[0]%> Original Name: <%= user[1]%> Map to: <%= user[2]%><br>
-<% end %>
+<% if params[:details] %>
 
-<p>
-<h3><%= l(:assignment_tag)%></h3>
-
-<table>
-	<tr>
-		<th><%= l(:task_tag)%></th>
-		<th><%= l(:xml_assignment)%></th>
-		<th><%= l(:assignedto_auto)%></th>
-		<th>Info</th>
-	</tr>
-	<% 
-#	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
-	@assignments.each do |assign| 
-		task = @tasks.select { |task| task.task_id == assign.task_uid}
-		assigned_to = @usermapping.select {|id, user| id == assign.resource_uid}[0]
-		
-	%>
-	<tr>
-		<td><%= task[0].name %></td>
-		<td><%= assigned_to[1] %></td>
-		<td><%= assigned_to[2].name unless assigned_to[3]>2 %></td>
-		<td><%= I18n.t('user_imp_status_' + assigned_to[3].to_s)%></td>
-	</tr>	
+	<h3>User Mapping</h3>
+	<% @usermapping.each do |user| %>
+		Resource_ID: <%= user[0]%> Original Name: <%= user[1]%> Map to: <%= user[2]%><br>
 	<% end %>
-</table>
-
-<p>
-<h3><%= l(:task_tag)%></h3>
-<% @tasks.each do |task| %>
-<%= task.name %> WBS:<%= task.wbs %><br>
+	
+	<p>
+	<h3><%= l(:assignment_tag)%></h3>
+	<table>
+		<tr>
+			<th><%= l(:task_tag)%></th>
+			<th><%= l(:xml_assignment)%></th>
+			<th><%= l(:assignedto_auto)%></th>
+			<th>Info</th>
+		</tr>
+		<% 
+	#	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
+		@assignments.each do |assign| 
+			task = @tasks.select { |task| task.task_id == assign.task_uid}
+			assigned_to = @usermapping.select {|id, user| id == assign.resource_uid}[0]		
+			
+		%>
+		<tr>
+			<td><%= task[0].name unless task.nil? %></td>
+			<td><%= assigned_to[1] %></td>
+			<td><%= assigned_to[2].name unless assigned_to[3]>2 %></td>
+			<td><%= I18n.t('user_imp_status_' + assigned_to[3].to_s)%></td>
+		</tr>	
+		<% end %>
+	</table>
+	
+	<p>
+	<h3><%= l(:task_tag)%></h3>
+	<% @tasks.each do |task| %>
+	<%= task.name %> WBS:<%= task.wbs %><br>
+	<% end %>
+	</p>
+<%else%>
+	<p>		
+		<%= @tasks.count%> - <%= l(:task_tag)%><br>
+		<%= @assignments.count %> - <%= l(:assignment_tag)%><br>
+	</p>
+  
 <% end %>
-</p>
 <p>
 	<%= form_tag({:controller => 'msproj_imp',:id =>'import_form', :action => 'analyze', :project_id => @project, :upload_path => @upload_path, :do_import => 'true'}, :multipart => true) do %>
 <!-- 	<%= submit_tag l(:button_import) if @no_mapping_found == 0 %>-->

@@ -45,7 +45,7 @@ class MsprojImpController < ApplicationController
 
       content = File.read(@upload_path)
 
-      logger.info content
+      # logger.info content
 
       doc     = REXML::Document.new(content)
                  
@@ -74,7 +74,7 @@ class MsprojImpController < ApplicationController
         assign = MsprojAssignment.new(child)
         if assign.resource_uid >= 0
           resource_uids.push(assign.resource_uid) 
-#          @assignments.push(assign)
+          @assignments.push(assign)
         end         
       end
       
@@ -154,8 +154,7 @@ class MsprojImpController < ApplicationController
           logger.info("Assign: #{assign}")
           mapped_user=@usermapping.select { |id, name, user_obj, status| id == assign.resource_uid and status < 3}.first
           logger.info("Mapped User: #{mapped_user}")
-          issue.assigned_to_id  = mapped_user[2].id unless mapped_user.nil?
-          
+          issue.assigned_to_id  = mapped_user[2].id unless mapped_user.nil?          
         end
       else
         issue.subject = @title              

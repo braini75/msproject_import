@@ -14,5 +14,4 @@ class MsprojTask
   attr_accessor :done_ratio
   attr_accessor :priority_id
   attr_accessor :notes
- 
 end

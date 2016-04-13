@@ -2,7 +2,7 @@ Redmine::Plugin.register :msproject_import do
   name 'Msproject Import plugin'
   author 'Thomas Koch'
   description 'This is a plugin for Redmine to import xml-exported date from MS Project'
-  version '0.3.0'
+  version '0.4.0'
   url 'https://github.com/braini75/msproject_import.git'
   author_url 'https://github.com/braini75'
   

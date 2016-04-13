@@ -1,6 +1,14 @@
 <h2>Ms Project Import plugin - Upload <%= @project.name %></h2> 
 
+<p>
 <%= form_tag({:controller => 'msproj_imp', :action => 'analyze', :project_id => @project}, :multipart => true) do %>
-<%= file_field_tag 'uploaded_file' %>
-<%= submit_tag l(:button_analyze) %>
+<%= file_field_tag 'uploaded_file' %>	
+</p>
+<p>
+	
+</p>
+<p>
+<%= submit_tag l(:button_analyze) %><%= check_box_tag 'details' %> <%= l(:label_check_details)%>	
+</p>
+
 <% end %>

@@ -17,3 +17,4 @@ en:
   no_failed_mapping: "%{count} Users missing or not in project! Please resolve manually."
   settings_tracker_caption: "Default Tracker"
   settings_tracker_help:  "This is the default Tracker all imported tasks will get."
+  label_check_details: "Show detailed Information"

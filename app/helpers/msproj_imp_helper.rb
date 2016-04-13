@@ -38,7 +38,7 @@ module MsprojImpHelper
 
   def xml_tasks tasks
       task = MsprojTask.new
-      task.task_id = tasks.elements['ID'].text.to_i if tasks.elements['ID']
+      task.task_id = tasks.elements['UID'].text.to_i if tasks.elements['UID']
       task.wbs = tasks.elements['WBS'].text if tasks.elements['WBS']
 #      task.outline_number = tasks.elements['OutlineNumber'].text
       task.outline_level = tasks.elements['OutlineLevel'].text.to_i if tasks.elements['OutlineLevel']
