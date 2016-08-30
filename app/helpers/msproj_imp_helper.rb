@@ -58,7 +58,9 @@ module MsprojImpHelper
       #task.create = name ? !(has_task(name.text)) : true
       
       duration_arr = tasks.elements["Duration"].text.split("H") if tasks.elements['Duration']
-      task.duration = duration_arr[0][2..duration_arr[0].size-1] if duration_arr   
+      duration_hour = duration_arr[0][2..duration_arr[0].size-1] if duration_arr
+      duration_min = duration_arr[1][0..duration_arr[1].index("M")-1] if duration_arr && duration_arr[1] && duration_arr[1].index("M")
+      task.duration = (duration_hour.to_f + duration_min.to_f/60).to_s if duration_arr   
       task.done_ratio = tasks.elements["PercentComplete"].text if tasks.elements['PercentComplete']          
       task.outline_level = tasks.elements["OutlineLevel"].text.to_i if tasks.elements['OutlineLevel']
       if tasks.elements['Priority']
