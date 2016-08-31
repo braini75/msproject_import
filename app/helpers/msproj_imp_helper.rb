@@ -40,12 +40,11 @@ module MsprojImpHelper
       task = MsprojTask.new
       task.task_id = tasks.elements['UID'].text.to_i if tasks.elements['UID']
       task.wbs = tasks.elements['WBS'].text if tasks.elements['WBS']
-#      task.outline_number = tasks.elements['OutlineNumber'].text
       task.outline_level = tasks.elements['OutlineLevel'].text.to_i if tasks.elements['OutlineLevel']
       
       name = tasks.elements['Name']
       task.name = name.text if name
-      date = Date.new
+      
       start_date = tasks.elements['Start']
       task.start_date = start_date.text.split('T')[0] if start_date
       
@@ -61,6 +60,7 @@ module MsprojImpHelper
       task.duration = duration_arr[0][2..duration_arr[0].size-1] if duration_arr   
       task.done_ratio = tasks.elements["PercentComplete"].text if tasks.elements['PercentComplete']          
       task.outline_level = tasks.elements["OutlineLevel"].text.to_i if tasks.elements['OutlineLevel']
+      
       if tasks.elements['Priority']
         priority = tasks.elements["Priority"].text 
         if priority == "500"
