@@ -38,7 +38,8 @@ module MsprojImpHelper
 
   def xml_tasks tasks
       task = MsprojTask.new
-      task.task_id = tasks.elements['UID'].text.to_i if tasks.elements['UID']
+      task.task_uid = tasks.elements['UID'].text.to_i if tasks.elements['UID']
+	  task.task_id = tasks.elements['ID'].text.to_i if tasks.elements['ID']
       task.wbs = tasks.elements['WBS'].text if tasks.elements['WBS']
       task.outline_level = tasks.elements['OutlineLevel'].text.to_i if tasks.elements['OutlineLevel']
       
@@ -80,6 +81,14 @@ module MsprojImpHelper
         task.priority_id = 2  #normal
       end
       task.notes=tasks.elements["Notes"].text if tasks.elements["Notes"]
+	  
+	logger.info("Task uID: #{task.task_uid}")
+	tasks.each_element('PredecessorLink') do |link|
+	 predecessor=MsprojTaskPredecessor.new
+	 link_to=predecessor.init(link)
+	 logger.info("Link Predecessor: #{link_to.predecessor_uid}")
+	end
+	  
     return task
   end rescue raise 'parse error'
   
