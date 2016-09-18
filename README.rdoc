@@ -3,21 +3,22 @@
 Redmine 2.x, 3.x
 
 == What you get:
-The plugin creates one root-ticket (task) in current project, which holds the other (sub)tasks as subtickets.
+The plugin creates one root-ticket (task) into te current project, which holds the other (sub)tasks as subtickets.
 
 Right now the plugin only imports tasks from the XML-file. If the resources are persons it tries to match them with registered redmine users. If no matching user is found, a warning is produced, but the import is still possible – in this case the resulting ticket will not have an owner.
 
 == What is imported: 
-Task.Name, start_date, finish_date, create_date, duration, done_ratio, priority
+Task.Name, start_date, finish_date, create_date, duration, done_ratio, priority, predecessor, notes
 
 
 == Installation
-1. go to `{REDMINE_ROOT}/plugin` directory.
-2. Intall:
+1) go to `{REDMINE_ROOT}/plugin` directory.
+
+2) Intall:
   git clone https://github.com/braini75/msproject_import.git
-3. Restart the redmine service. E.g. 
+3) Restart the redmine service. E.g. 
   service apache2 restart
-4. enjoy!
+4) enjoy!
 
 
 == Usage

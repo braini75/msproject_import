@@ -38,14 +38,14 @@ module MsprojImpHelper
 
   def xml_tasks tasks
       task = MsprojTask.new
-      task.task_id = tasks.elements['UID'].text.to_i if tasks.elements['UID']
+      task.task_uid = tasks.elements['UID'].text.to_i if tasks.elements['UID']
+	  task.task_id = tasks.elements['ID'].text.to_i if tasks.elements['ID']
       task.wbs = tasks.elements['WBS'].text if tasks.elements['WBS']
-#      task.outline_number = tasks.elements['OutlineNumber'].text
       task.outline_level = tasks.elements['OutlineLevel'].text.to_i if tasks.elements['OutlineLevel']
       
       name = tasks.elements['Name']
       task.name = name.text if name
-      date = Date.new
+      
       start_date = tasks.elements['Start']
       task.start_date = start_date.text.split('T')[0] if start_date
       
@@ -58,9 +58,12 @@ module MsprojImpHelper
       #task.create = name ? !(has_task(name.text)) : true
       
       duration_arr = tasks.elements["Duration"].text.split("H") if tasks.elements['Duration']
-      task.duration = duration_arr[0][2..duration_arr[0].size-1] if duration_arr   
+      duration_hour = duration_arr[0][2..duration_arr[0].size-1] if duration_arr
+      duration_min = duration_arr[1][0..duration_arr[1].index("M")-1] if duration_arr && duration_arr[1] && duration_arr[1].index("M")
+      task.duration = (duration_hour.to_f + duration_min.to_f/60).to_s if duration_arr   
       task.done_ratio = tasks.elements["PercentComplete"].text if tasks.elements['PercentComplete']          
       task.outline_level = tasks.elements["OutlineLevel"].text.to_i if tasks.elements['OutlineLevel']
+      
       if tasks.elements['Priority']
         priority = tasks.elements["Priority"].text 
         if priority == "500"
@@ -78,6 +81,14 @@ module MsprojImpHelper
         task.priority_id = 2  #normal
       end
       task.notes=tasks.elements["Notes"].text if tasks.elements["Notes"]
+	  
+	logger.info("Task uID: #{task.task_uid}")
+	tasks.each_element('PredecessorLink') do |link|
+	 predecessor=MsprojTaskPredecessor.new
+	 link_to=predecessor.init(link)
+	 logger.info("Link Predecessor: #{link_to.predecessor_uid}")
+	end
+	  
     return task
   end rescue raise 'parse error'
   

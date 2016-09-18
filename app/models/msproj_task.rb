@@ -1,5 +1,6 @@
 class MsprojTask
   attr_accessor :task_id
+  attr_accessor :task_uid
   attr_accessor :name
   attr_accessor :resource
   attr_accessor :start_date
