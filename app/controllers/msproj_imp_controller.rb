@@ -9,10 +9,9 @@ class MsprojImpController < ApplicationController
   after_filter :clear_flash
   
   include MsprojImpHelper      
-  @@cache = ActiveSupport::Cache::FileStore.new "/tmp/msproj_imp"
   
   def upload
-   
+	init_cache
   end 
   
   def import_results
@@ -20,6 +19,7 @@ class MsprojImpController < ApplicationController
           redirect_to :action => 'upload'
         else
           @root_task = import
+		  @@cache.clear
     end
   end
 
@@ -133,6 +133,14 @@ class MsprojImpController < ApplicationController
   private
   def clear_flash
 	flash.clear
+  end
+  
+  def init_cache
+	tmp_path = Rails.root.join('tmp')
+	unless File.writable? tmp_path.to_s
+		flash[:error] = "Temp-Dir: '" + tmp_path.to_s + "' is not writable!"
+	end
+	@@cache = ActiveSupport::Cache::FileStore.new(Rails.root.join('tmp','msproj_imp').to_s)
   end
   
   def read_cache
