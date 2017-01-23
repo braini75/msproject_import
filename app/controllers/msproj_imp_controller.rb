@@ -4,6 +4,7 @@ class MsprojImpController < ApplicationController
   require 'date'
   
   before_filter :find_project, :only => [:analyze, :upload, :import_results]
+  before_filter :init_cache, :only => [:analyze, :upload, :import_results]
   before_filter :read_cache, :only => [:import_results, :status]
   after_filter  :write_cache, :only => [:analyze]
   after_filter :clear_flash
@@ -11,13 +12,16 @@ class MsprojImpController < ApplicationController
   include MsprojImpHelper      
   
   def upload
-	init_cache
+	
   end 
   
   def import_results
 	if params[:do_import].nil?
           redirect_to :action => 'upload'
         else
+		  @add_IssueSuffix = params[:add_IssueSuffix]
+		  @add_wbs2name = params[:add_wbs2name]
+		  
           @root_task = import
 		  @@cache.clear
     end
@@ -184,7 +188,12 @@ class MsprojImpController < ApplicationController
       issue.tracker_id = Setting.plugin_msproject_import['tracker_default']  # 1-Bug, 2-Feature...
       
       if task.task_uid > 0
-        issue.subject = task.name
+		subject = ""
+		subject = @add_IssueSuffix + " " if @add_IssueSuffix
+		subject = subject + task.wbs + " " if @add_wbs2name 
+
+		issue.subject = subject + task.name
+		
         assign=@assignments.select{|as| as.task_uid == task.task_uid}.first
         unless assign.nil? 
           logger.info("Assign: #{assign}")
@@ -231,7 +240,7 @@ class MsprojImpController < ApplicationController
 		mapUID2IssueID[task.task_uid]= issue.id
         last_task_uid = issue.id
         root_task_uid = issue.id if task.outline_level == 0
-        logger.info "New issue #{task.name} in Project: #{@project} created!" 
+        logger.info "New issue #{issue.subject} in Project: #{@project} created!" 
         flash[:notice] = "Project successful inserted!"        
       else
         errorMsg = "Issue #{task.name} Task #{task.task_id} gives Error: #{issue.errors.full_messages}"

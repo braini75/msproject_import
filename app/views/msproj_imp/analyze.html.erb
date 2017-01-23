@@ -56,6 +56,11 @@
 	</p>
   
 <% end %>
+
+<p>
+    <%= text_field_tag 'add_IssueSuffix' %> <%= l(:label_add_IssueSuffix)%>	
+	<%= check_box_tag 'add_wbs2name' %> <%= l(:label_add_wbs2name)%>	
+</p>
 <p>	
 	<%= submit_tag l(:button_import)%>
 <% end %>	
