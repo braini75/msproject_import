@@ -20,3 +20,5 @@ en:
   settings_tracker_caption: "Default Tracker"
   settings_tracker_help:  "This is the default Tracker all imported tasks will get."
   label_check_details: "Show detailed Information"
+  label_add_IssueSuffix: "Add following suffix to Issue subject"
+  label_add_wbs2name: "Add WBS Number Issue subject"
