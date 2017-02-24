@@ -20,3 +20,5 @@ zh:
   settings_tracker_caption: "默认跟踪类型"
   settings_tracker_help:  "该项定义了导入的任务的默认跟踪类型。"
   label_check_details: "显示明细信息"
+  label_add_IssueSuffix: "添加以下后缀信息到任务主题"
+  label_add_wbs2name: "添加WBS编号到任务主题"
