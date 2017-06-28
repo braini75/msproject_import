@@ -199,19 +199,23 @@ class MsprojImpController < ApplicationController
           logger.info("Assign: #{assign}")
           mapped_user=@usermapping.select { |id, name, user_obj, status| id == assign.resource_uid and status < 3}.first
           logger.info("Mapped User: #{mapped_user}")
-          issue.assigned_to_id  = mapped_user[2].id unless mapped_user.nil?          
+          issue.assigned_to_id  = mapped_user[2].id unless mapped_user.nil?
+		  if issue.project.module_enabled?("plusgantt") && CustomField.find_by_name_and_type('asignacion', 'IssueCustomField') && assign.units && assign.units.to_d != 1.0
+			asignment = Plusgantt.hour_by_day * assign.units
+			logger.info("asignment: " + asignment.to_s)
+			field_list = []
+			field_list << Hash[CustomField.find_by_name_and_type('asignacion', 'IssueCustomField').id, asignment]
+			issue.custom_field_values = field_list.reduce({},:merge)
+		  end
         end
       else
         issue.subject = session[:title]	
       end
 
-      issue.start_date = task.start_date
-      issue.due_date = task.finish_date
       issue.updated_on = task.create_date
       issue.created_on = task.create_date
-      issue.estimated_hours = task.duration
       issue.priority_id = task.priority_id
-      issue.done_ratio = task.done_ratio     
+ 
       issue.description = task.notes
 
       # subtask?            
@@ -235,6 +239,28 @@ class MsprojImpController < ApplicationController
       
       # required custom fields:
       update_custom_fields(issue, @required_custom_fields)
+	  
+	  if MsprojectImport.import_summary
+		if MsprojectImport.use_work
+			issue.estimated_hours = task.work
+		else
+			issue.estimated_hours = task.duration
+		end
+		issue.done_ratio = task.done_ratio    
+		issue.start_date = task.start_date
+		issue.due_date = task.finish_date
+	  else
+		if task.summary == '0'
+			if MsprojectImport.use_work
+				issue.estimated_hours = task.work
+			else
+				issue.estimated_hours = task.duration
+			end
+			issue.done_ratio = task.done_ratio    
+			issue.start_date = task.start_date
+			issue.due_date = task.finish_date
+		  end
+	  end
                         
       if issue.save   
 		mapUID2IssueID[task.task_uid]= issue.id

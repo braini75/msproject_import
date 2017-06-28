@@ -1,3 +1,7 @@
+ActionDispatch::Callbacks.to_prepare do
+  require 'msproject_import'
+end
+
 Redmine::Plugin.register :msproject_import do
   name 'Msproject Import plugin'
   author 'Thomas Koch'
