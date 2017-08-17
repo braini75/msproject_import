@@ -2,13 +2,13 @@
 
 <%= form_tag({:controller => 'msproj_imp', :action => 'analyze', :project_id => @project}, :multipart => true) do %>
 	<p>
-	<label for="upload_file">Select File</label>
-    <%= file_field 'upload', 'datafile' %>
+		<label for="upload_file">Select File</label>
+		<%= file_field 'upload', 'datafile' %>
 	</p>
-
 	<p>
-	
+		<%= l(:label_parent_issue) %> <%= @parent_issue_text %> <%= check_box_tag 'erase_issues' %> <%= l(:label_erase_issues)%>
 	</p>
+	<p></p>
 	<p>
 		<%= submit_tag l(:button_analyze) %><%= check_box_tag 'details' %> <%= l(:label_check_details)%>	
 	</p>

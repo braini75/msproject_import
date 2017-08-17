@@ -67,7 +67,6 @@ module MsprojImpHelper
       task.duration = (duration_hour.to_f + duration_min.to_f/60).to_s if duration_arr   
 	  
       task.done_ratio = tasks.elements["PercentWorkComplete"].text if tasks.elements['PercentWorkComplete']          
-      task.outline_level = tasks.elements["OutlineLevel"].text.to_i if tasks.elements['OutlineLevel']
       
       if tasks.elements['Priority']
         priority = tasks.elements["Priority"].text 

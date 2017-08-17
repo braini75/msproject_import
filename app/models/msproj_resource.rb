@@ -10,6 +10,7 @@ class MsprojResource
     name_arr = name.split(/[\,]?\s+/) # Split on comma or whitespace
     users_found = User.where("firstname LIKE ? AND lastname LIKE ?", "%#{name_arr[0]}%", "%#{name_arr[1]}%")
     users_found += User.where("firstname LIKE ? AND lastname LIKE ?", "%#{name_arr[1]}%", "%#{name_arr[0]}%")
+	users_found += User.where("login = ?", name_arr[0])
     
     unless users_found.empty?      
       # test if user is member of project      
