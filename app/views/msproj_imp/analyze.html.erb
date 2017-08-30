@@ -12,6 +12,7 @@
 		<%= text_field_tag 'add_IssueSuffix' %> <%= l(:label_add_IssueSuffix)%>	
 		<%= check_box_tag 'add_wbs2name' %> <%= l(:label_add_wbs2name)%>
 		<%= submit_tag l(:button_import)%>
+		<%= link_to l(:button_cancel), :controller => 'msproj_imp', :action => "upload", :project_id => @project.id %>
 	</p>
 
 	<p>

@@ -54,7 +54,6 @@ module MsprojImpHelper
       create_date = tasks.elements['CreateDate']
       date_time = create_date.text.split('T') if create_date
       task.create_date = date_time[0] + ' ' + date_time[1] if date_time
-      #task.create = name ? !(has_task(name.text)) : true
       
       duration_arr = tasks.elements["Work"].text.split("H") if tasks.elements['Work']
       duration_hour = duration_arr[0][2..duration_arr[0].size-1] if duration_arr
@@ -96,12 +95,4 @@ module MsprojImpHelper
 	  
     return task
   end rescue raise 'parse error'
-  
-  private
-  def has_task name, issues
-    issues.each do |issue|
-      return true if issue.subject == name
-    end
-    false
-  end
 end
