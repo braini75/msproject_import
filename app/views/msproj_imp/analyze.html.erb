@@ -1,6 +1,5 @@
 <h2>MS Project Import Details for <%= @project.name %> </h2>
-
-<%= form_tag({:controller => 'msproj_imp',:id =>'import_form', :action => 'import_results', :project_id => @project, :do_import => 'true'}, :multipart => true) do %>
+<%= form_tag(msproj_imp_init_run_path(:project_id => @project), :id => 'import_form') do %>
 	<h3>Resource-User Mapping</h3>
 	<%= render(partial: "usermapping", :object => @usermapping) %>
 
@@ -9,8 +8,6 @@
 			<div style="background-color: #FFEB3B;"><h3><%= l(:label_issues_will_be_erased) %></h3></div>
 			<%= hidden_field_tag 'erase_issues', params[:erase_issues] %>
 		<% end %>
-		<%= text_field_tag 'add_IssueSuffix' %> <%= l(:label_add_IssueSuffix)%>	
-		<%= check_box_tag 'add_wbs2name' %> <%= l(:label_add_wbs2name)%>
 		<%= submit_tag l(:button_import)%>
 		<%= link_to l(:button_cancel), :controller => 'msproj_imp', :action => "upload", :project_id => @project.id %>
 	</p>

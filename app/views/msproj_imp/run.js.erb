@@ -1,0 +1,11 @@
+$('#import-progress').progressbar({value: <%= session[:current].to_i %>});
+$('#progress-label').text("<%= session[:current].to_i %> / <%= @tasks.size.to_i %>");
+
+<% if session[:finished] %>
+	window.location.href='<%= msproj_imp_import_results_path(:project_id => @project) %>';
+<% else %>
+	$.ajax({
+	  url: '<%= msproj_imp_run_path(:project_id => @project, :format => 'js') %>',
+	  type: 'post'
+	});
+<% end %>

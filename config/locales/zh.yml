@@ -9,6 +9,7 @@ zh:
   button_analyze: "分析"
   button_upload: "上传"
   button_import: "导入"
+  file_required: "XML file is required"
   upload_success: "文件已上传。"
   assignedto_auto: "将指派给"
   assignedto_manuel: "指派给项目的其他成员"

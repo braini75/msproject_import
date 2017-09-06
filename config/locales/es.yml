@@ -8,6 +8,7 @@ es:
   button_analyze: "Analizar"
   button_upload: "Subir"
   button_import: "Importar"
+  file_required: "Se requiere archivo XML"
   upload_success: "Archivo Importado satisfactoriamente"
   assignedto_auto: "Se asignará a"
   assignedto_manuel: "Asignar a otro recurso del Cronograma"

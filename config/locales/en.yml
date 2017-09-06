@@ -8,6 +8,7 @@ en:
   assignment_tag: "Assignment"
   button_analyze: "Analyze"
   button_upload: "Upload"
+  file_required: "XML file is required"
   button_import: "Import"
   upload_success: "File Upload done"
   assignedto_auto: "Will assigned to"

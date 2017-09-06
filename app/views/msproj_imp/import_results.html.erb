@@ -6,14 +6,8 @@
 </p>
 <p>
 
-<% if @issues_imported > 0 %>
-	<%	
-		if @root_task.to_i == 0
-			issues = Issue.select{ |issue| }.map
-		else
-			issues = Issue.select{ |issue| issue.root_id == @root_task.to_i}.map
-		end
-	%>
+<% if @issues_imported.size > 0 %>
+	
 	<h3>Imported Tasks:</h3>
 	<table class="list">
 		<tr>
@@ -22,7 +16,7 @@
 			<th>Info</th>
 		</tr>
 		<%
-		issues.each do |task|
+		@issues_imported.each do |task|
 			if task.assigned_to_id.nil?
 				user="Not assigned!"
 				css_td="warning"

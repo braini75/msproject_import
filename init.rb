@@ -12,7 +12,7 @@ Redmine::Plugin.register :msproject_import do
   
   settings :default => {'tracker_default' => 2}, :partial => 'settings/msproject_import'
   project_module :msproject_import do
-    permission :msproject_import, { :msproj_imp => [:upload, :import, :analyze, :import_results]}
+    permission :msproject_import, { :msproj_imp => [:upload, :import, :analyze, :run, :import_results]}
   end
   menu :project_menu, :msproject_import, { :controller => 'msproj_imp', :action => 'upload' }, :caption => :menu_caption, :after => :settings, :param => :project_id  
 end

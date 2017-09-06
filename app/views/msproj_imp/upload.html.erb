@@ -1,6 +1,5 @@
-<h2>Ms Project Import plugin - Upload <%= @project.name %></h2> 
-
-<%= form_tag({:controller => 'msproj_imp', :action => 'analyze', :project_id => @project}, :multipart => true) do %>
+<h2>Ms Project Import plugin - Upload <%= @project.name %></h2>
+<%= form_tag(msproj_imp_analyze_path(:project_id => @project), :multipart => true) do %>
 	<p>
 		<label for="upload_file">Select File</label>
 		<%= file_field 'upload', 'datafile' %>
