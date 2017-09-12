@@ -1,35 +1,36 @@
 <h2>Ms Project Import plugin - Results:</h2> 
-<% issue = Issue.find(@root_task)%>
-
 </p>
 <h2>Details for <%= @project.name %>:</h2>
 <p>
 	<b><%= l(:project_title)%>:</b> <%= session[:title] %>
 </p>
 <p>
-<h3>Imported Tasks:</h3>
-<% issues = Issue.select{ |issue| issue.root_id == @root_task.to_i}.map %>
-<table class="list">
-	<tr>
-		<th><%= l(:task_tag)%></th>
-		<th>assigned to</th>
-		<th>Info</th>
-	</tr>
-	<%
-	issues.each do |task|
-		if task.assigned_to_id.nil?
-			user="Not assigned!"
-			css_td="warning"
-		else
-			css_td="success"
-			user=User.find(task.assigned_to_id)
-		end
-	%>
-	<tr class="issue idnt idnt-<%=issue_deep(task)%>">
-		<td class="subject"><%= link_to "#{task.subject}(#{task.id})", { :controller => "issues", :action => "show", :id => task} %></td>
-		<td class="assigned_to <%=css_td%>"><%= user%></td>
-		<td></td>
-	</tr>
-	<%end%>
-</table>
+
+<% if @issues_imported.size > 0 %>
+	
+	<h3>Imported Tasks:</h3>
+	<table class="list">
+		<tr>
+			<th><%= l(:task_tag)%></th>
+			<th>assigned to</th>
+			<th>Info</th>
+		</tr>
+		<%
+		@issues_imported.each do |task|
+			if task.assigned_to_id.nil?
+				user="Not assigned!"
+				css_td="warning"
+			else
+				css_td="success"
+				user=User.find(task.assigned_to_id)
+			end
+		%>
+		<tr class="issue idnt idnt-<%=issue_deep(task)%>">
+			<td class="subject"><%= link_to "#{task.subject}(#{task.id})", { :controller => "issues", :action => "show", :id => task} %></td>
+			<td class="assigned_to <%=css_td%>"><%= user%></td>
+			<td></td>
+		</tr>
+		<%end%>
+	</table>
+<% end %>
 </p>

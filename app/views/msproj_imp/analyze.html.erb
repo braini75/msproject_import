@@ -1,67 +1,58 @@
 <h2>MS Project Import Details for <%= @project.name %> </h2>
-<p>
-	<b><%= l(:project_title)%>:</b> <%= @title %>
-</p>
-<%= form_tag({:controller => 'msproj_imp',:id =>'import_form', :action => 'import_results', :project_id => @project, :do_import => 'true'}, :multipart => true) do %>
+<%= form_tag(msproj_imp_init_run_path(:project_id => @project), :id => 'import_form') do %>
+	<h3>Resource-User Mapping</h3>
+	<%= render(partial: "usermapping", :object => @usermapping) %>
 
-<%
-=begin
-%>
-
-<h3>Resource-User Mapping</h3>
-<%= render(partial: "usermapping", :object => @usermapping) %>
-
-<%
-=end
-%>
-
-<p>
-<% if params[:details] %>
-	
 	<p>
-	<h3><%= l(:assignment_tag)%></h3>
-	<table>
-		<tr>
-			<th><%= l(:task_tag)%></th>
-			<th><%= l(:xml_assignment)%></th>
-			<th><%= l(:assignedto_auto)%></th>
-			<th>Info</th>
-		</tr>
-		<% 
-	#	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
-		@assignments.each do |assign| 
-			task = @tasks.select { |task| task.task_uid == assign.task_uid}
-			assigned_to = @usermapping.select {|id, user| id == assign.resource_uid}[0]		
-			
-		%>
-		<tr>
-			<td><%= task[0].name unless task.nil? %></td>
-			<td><%= assigned_to[1] %></td>
-			<td><%= assigned_to[2].name unless assigned_to[3]>2 %></td>
-			<td><%= I18n.t('user_imp_status_' + assigned_to[3].to_s)%></td>
-		</tr>	
+		<% if params[:erase_issues] %>
+			<div style="background-color: #FFEB3B;"><h3><%= l(:label_issues_will_be_erased) %></h3></div>
+			<%= hidden_field_tag 'erase_issues', params[:erase_issues] %>
 		<% end %>
-	</table>
-	
-	<p>
-	<h3><%= l(:task_tag)%></h3>
-	<% @tasks.each do |task| %>
-	<%= task.name %> WBS:<%= task.wbs %><br>
-	<% end %>
+		<%= submit_tag l(:button_import)%>
+		<%= link_to l(:button_cancel), :controller => 'msproj_imp', :action => "upload", :project_id => @project.id %>
 	</p>
-<%else%>
-	<p>		
-		<%= @tasks.count%> - <%= l(:task_tag)%><br>
-		<%= @assignments.count %> - <%= l(:assignment_tag)%><br>
-	</p>
-  
-<% end %>
 
-<p>
-    <%= text_field_tag 'add_IssueSuffix' %> <%= l(:label_add_IssueSuffix)%>	
-	<%= check_box_tag 'add_wbs2name' %> <%= l(:label_add_wbs2name)%>	
-</p>
-<p>	
-	<%= submit_tag l(:button_import)%>
-<% end %>	
-</p>
+	<p>
+		<% if params[:details] %>
+			<p>
+				<h3><%= l(:assignment_tag)%></h3>
+				<table class="list">
+					<tr>
+						<th><%= l(:task_tag)%></th>
+						<th><%= l(:xml_assignment)%></th>
+						<th><%= l(:assignedto_auto)%></th>
+						<th>Info</th>
+					</tr>
+					<% 
+				#	@members = Member.find(:all, params[:project_id]).collect {|m| User.find_by_id m.user_id }
+					@assignments.each do |assign| 
+						task = @tasks.select { |task| task.task_uid == assign.task_uid}
+						assigned_to = @usermapping.select {|id, user| id == assign.resource_uid}[0]		
+						if assigned_to[3] > 1
+							css_tr = 'warning'
+						else
+							css_tr = ''
+						end
+					%>
+						<tr class="assigned_to <%=css_tr%>">
+							<td><%= task[0].name unless task.nil? %></td>
+							<td><%= assigned_to[1] %></td>
+							<td><%= assigned_to[2].name unless assigned_to[3]>2 %></td>
+							<td><%= I18n.t('user_imp_status_' + assigned_to[3].to_s)%></td>
+						</tr>	
+					<% end %>
+				</table>	
+			<p>
+				<h3><%= l(:task_tag)%></h3>
+				<% @tasks.each do |task| %>
+					<%= task.name %> WBS:<%= task.wbs %><br>
+				<% end %>
+			</p>
+		<%else%>
+			<p>		
+				<%= @tasks.count%> - <%= l(:task_tag)%><br>
+				<%= @assignments.count %> - <%= l(:assignment_tag)%><br>
+			</p> 
+		<% end %>
+	</p>
+<% end %>

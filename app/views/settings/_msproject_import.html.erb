@@ -10,5 +10,19 @@
       </td>
       <td><%= l(:settings_tracker_help)%></td>
     </tr>
+	<tr>
+      <th><%= l(:label_use_work)%></th>
+      <td>
+      	<%= check_box_tag 'settings[use_work]', '1', MsprojectImport.use_work %>
+      </td>
+      <td></td>
+    </tr>
+	<tr>
+      <th><%= l(:label_import_summary)%></th>
+      <td>
+      	<%= check_box_tag 'settings[import_summary]', '1', MsprojectImport.import_summary %>
+      </td>
+      <td><%= l(:label_import_summary_help)%></td>
+    </tr>
   </tbody>
 </table>

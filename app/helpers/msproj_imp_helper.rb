@@ -1,4 +1,3 @@
-
 module MsprojImpHelper  
   def issue_deep(issue)
 	  @cnt_deep=0
@@ -55,14 +54,18 @@ module MsprojImpHelper
       create_date = tasks.elements['CreateDate']
       date_time = create_date.text.split('T') if create_date
       task.create_date = date_time[0] + ' ' + date_time[1] if date_time
-      #task.create = name ? !(has_task(name.text)) : true
       
-      duration_arr = tasks.elements["Duration"].text.split("H") if tasks.elements['Duration']
+      duration_arr = tasks.elements["Work"].text.split("H") if tasks.elements['Work']
+      duration_hour = duration_arr[0][2..duration_arr[0].size-1] if duration_arr
+      duration_min = duration_arr[1][0..duration_arr[1].index("M")-1] if duration_arr && duration_arr[1] && duration_arr[1].index("M")
+      task.work = (duration_hour.to_f + duration_min.to_f/60).to_s if duration_arr
+	  
+	  duration_arr = tasks.elements["Duration"].text.split("H") if tasks.elements['Duration']
       duration_hour = duration_arr[0][2..duration_arr[0].size-1] if duration_arr
       duration_min = duration_arr[1][0..duration_arr[1].index("M")-1] if duration_arr && duration_arr[1] && duration_arr[1].index("M")
       task.duration = (duration_hour.to_f + duration_min.to_f/60).to_s if duration_arr   
-      task.done_ratio = tasks.elements["PercentComplete"].text if tasks.elements['PercentComplete']          
-      task.outline_level = tasks.elements["OutlineLevel"].text.to_i if tasks.elements['OutlineLevel']
+	  
+      task.done_ratio = tasks.elements["PercentWorkComplete"].text if tasks.elements['PercentWorkComplete']          
       
       if tasks.elements['Priority']
         priority = tasks.elements["Priority"].text 
@@ -81,6 +84,7 @@ module MsprojImpHelper
         task.priority_id = 2  #normal
       end
       task.notes=tasks.elements["Notes"].text if tasks.elements["Notes"]
+	  task.summary = tasks.elements["Summary"].text if tasks.elements["Summary"]
 	  
 	logger.info("Task uID: #{task.task_uid}")
 	tasks.each_element('PredecessorLink') do |link|
@@ -91,12 +95,4 @@ module MsprojImpHelper
 	  
     return task
   end rescue raise 'parse error'
-  
-  private
-  def has_task name, issues
-    issues.each do |issue|
-      return true if issue.subject == name
-    end
-    false
-  end
 end
