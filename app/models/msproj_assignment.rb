@@ -11,8 +11,4 @@ class MsprojAssignment
 	self.units			= xml_assign.elements['Units'].text.to_d if xml_assign.elements['Units']
   end
   
-  def info
-    return "Noch nichts!"
-  end
-  
 end

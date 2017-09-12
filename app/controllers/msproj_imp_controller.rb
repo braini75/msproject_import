@@ -3,14 +3,14 @@ class MsprojImpController < ApplicationController
   require 'rexml/document'
   require 'date'
   
-  before_filter :find_project, :only => [:analyze, :upload, :import_results, :init_run, :run]
-  before_filter :init_cache, :only => [:analyze, :upload, :import_results]
+  before_action :find_project, :only => [:analyze, :upload, :import_results, :init_run, :run]
+  before_action :init_cache, :only => [:analyze, :upload, :import_results]
   before_filter :read_cache, :only => [:import_results, :status, :init_run, :run]
   after_filter  :write_cache, :only => [:analyze]
   after_filter :clear_flash
   
   include MsprojImpHelper  
-  include PlusganttUtilsHelper
+  #include PlusganttUtilsHelper
   
   def upload
 	flash.clear
@@ -392,6 +392,9 @@ class MsprojImpController < ApplicationController
 		issue = Issue.new(:author => User.current, :project  => @project)
 		issue.tracker_id = Setting.plugin_msproject_import['tracker_default']  # 1-Bug, 2-Feature...
 		if task.task_uid > 0
+		  subject = ""
+      subject = @add_IssueSuffix + " " if @add_IssueSuffix
+      subject = subject + task.wbs + " " if @add_wbs2name
 			issue.subject = task.name
 			assign=@assignments.select{|as| as.task_uid == task.task_uid}.first
 			unless assign.nil? 
@@ -533,11 +536,16 @@ class MsprojImpController < ApplicationController
 		end
 	end
 	
-	def get_issue_project_parent
-		if @utils.nil?
-			@utils = Utils.new()
-		end
-		return @utils.get_issue_project_parent(@project)
+	# Get projects parent issue
+	def get_issue_project_parent	   
+	    project = Project.find(params[:project_id]) 
+      issues = Issue.visible.where("project_id = ? and issues.parent_id is null", project).to_a || []
+      logger.info "Get projects parent issue: #{issues}"
+      if issues && issues.size == 1
+        return issues[0]
+      else
+        return
+      end
 	end
 	
 	def find_project
