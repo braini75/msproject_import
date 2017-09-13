@@ -5,7 +5,9 @@
 		<%= file_field 'upload', 'datafile' %>
 	</p>
 	<p>
-		<%= l(:label_parent_issue) %> <%= @parent_issue_text %> <%= check_box_tag 'erase_issues' %> <%= l(:label_erase_issues)%>
+		<%= l(:label_parent_issue) %>
+		<%= select_tag 'parent_issue', options_from_collection_for_select(@parent_issues, "id", "subject"), include_blank: true %> 
+		<%= check_box_tag 'erase_issues' %> <%= l(:label_erase_issues)%>
 	</p>
 	<p></p>
 	<p>

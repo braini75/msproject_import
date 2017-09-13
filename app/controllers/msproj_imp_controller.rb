@@ -10,83 +10,71 @@ class MsprojImpController < ApplicationController
   after_filter :clear_flash
   
   include MsprojImpHelper  
-  #include PlusganttUtilsHelper
   
   def upload
-	flash.clear
-	@parent_issue = get_issue_project_parent
-	if @parent_issue.nil?
-		@parent_issue_text = l(:label_not_not_found)
-	else
-		@parent_issue_text = "#" + @parent_issue.id.to_s + " - " + @parent_issue.subject
-	end
+	 flash.clear
+	 @parent_issues = get_issue_project_parent
   end 
   
   def init_run
-	@parent_issue = get_issue_project_parent
-	if @@cache.read(:parent_issue).nil?
-		@@cache.write(:parent_issue, @parent_issue)
-	end
-	
-	if params[:erase_issues]
-		if delete_issues < 0
-			if @parent_issue.nil?
-				@parent_issue_text = l(:label_not_not_found)
-			else
-				@parent_issue_text = "#" + @parent_issue.id.to_s + " - " + @parent_issue.subject
-			end
-			render :action => 'upload'
-			return
-		else
-			@@cache.write(:parent_issue, nil)
-		end
-	end
-	
-	if @@cache.read(:params).nil?
-		@@cache.write(:params, params)
-	end
-	
-	redirect_to msproj_imp_run_path(:project_id => @project)
+  	@parent_issue = @@cache.read(:parent_issue)	
+  	@@cache.write(:add_IssueSuffix,params[:add_IssueSuffix]) if params[:add_IssueSuffix]
+  	@@cache.write(:add_wbs2name,params[:add_wbs2name]) if params[:add_wbs2name]    
+  	
+  	if params[:erase_issues]
+  		if delete_issues < 0
+  		  @parent_issues = get_issue_project_parent
+  			render :action => 'upload'
+  			return
+  		end
+  	end
+  	
+  	if @@cache.read(:params).nil?
+  		@@cache.write(:params, params)
+  	end
+  	
+  	redirect_to msproj_imp_run_path(:project_id => @project)
   end
   
   def run
-	Rails.logger.info("run.................")
-	if request.post?
-		process_tasks({:max_items => max_items_per_request, :max_time => 10.seconds}, session[:current])
-		respond_to do |format|
-			format.html {
-				if session[:finished]
-					import_predecesor
-					@project.issues.reload
-					redirect_to msproj_imp_import_results_path(:project_id => @project)
-				else
-					Rails.logger.info("redirect run.................")
-					redirect_to msproj_imp_run_path(:project_id => @project)
-				end
-			}
-			Rails.logger.info("js run.................")
-			format.js
-		end
-	end
+  	Rails.logger.info("run.................")
+  	if request.post?
+  		process_tasks({:max_items => max_items_per_request, :max_time => 10.seconds}, session[:current])
+  		respond_to do |format|
+  			format.html {
+  				if session[:finished]
+  					import_predecesor
+  					@project.issues.reload
+  					redirect_to msproj_imp_import_results_path(:project_id => @project)
+  				else
+  					Rails.logger.info("redirect run.................")
+  					redirect_to msproj_imp_run_path(:project_id => @project)
+  				end
+  			}
+  			Rails.logger.info("js run.................")
+  			format.js
+  		end
+  	end
   end
   
   def import_results
-	if @@cache.read(:issues_imported_list).nil?
-		@issues_imported = []
-	else
-		list = @@cache.read(:issues_imported_list)
-		@issues_imported = Issue.where(:id => list).order(:id).to_a || []
-		list = nil
-	end
-	if !@@cache.read(:errorMessages).nil?
-		flash[:warning] = @@cache.read(:errorMessages)
-	end
-	@@cache.clear
-	session[:finished] = nil
-	session[:current] = nil
+  	if @@cache.read(:issues_imported_list).nil?
+  		@issues_imported = []
+  	else
+  		list = @@cache.read(:issues_imported_list)
+  		@issues_imported = Issue.where(:id => list).order(:id).to_a || []
+  		list = nil
+  	end
+  	if !@@cache.read(:errorMessages).nil?
+  		flash[:warning] = @@cache.read(:errorMessages)
+  	end
+  	@@cache.clear
+  	session[:finished] = nil
+  	session[:current] = nil
   end
 
   def analyze
+    
 	if params[:upload]
 		@filepath = MsprojDataFile.save(params[:upload]) 
 		@resources  = []
@@ -101,6 +89,21 @@ class MsprojImpController < ApplicationController
 		content = MsprojDataFile.content
 		doc     = REXML::Document.new(content) 
 		@prefix="MS Project Import(#{Date.today}): "
+		
+		# Set Parent issue according selection		
+		parent_issue = Issue.find(params[:parent_issue]) unless params[:parent_issue].empty?
+		logger.info "Parent: #{parent_issue}"
+		@@cache.write(:parent_issue, parent_issue)
+		
+		if params[:erase_issues]
+		  if params[:parent_issue].empty?
+		    # Delete whole project
+		    @issues2delete_count = @project.issues.count
+		  else
+		    @issues2delete_count = Issue.select(:id).order(id: :desc).where("root_id = ? AND id != ?", parent_issue.id, parent_issue.id).count  		    
+		  end
+      
+    end
 
 		flash.clear
 		
@@ -214,12 +217,7 @@ class MsprojImpController < ApplicationController
 		if !project_parent_issue
 			flash[:error] = error
 			flash[:warning] = warning unless warning.blank?
-			@parent_issue = get_issue_project_parent
-			if @parent_issue.nil?
-				@parent_issue_text = l(:label_not_not_found)
-			else
-				@parent_issue_text = "#" + @parent_issue.id.to_s + " - " + @parent_issue.subject
-			end
+			@parent_issues = get_issue_project_parent
 			render :action => 'upload'
 		else
 			extra_info = ""
@@ -229,11 +227,7 @@ class MsprojImpController < ApplicationController
 		end
 	else
 		flash[:error] = l(:file_required)
-		if @parent_issue.nil?
-			@parent_issue_text = l(:label_not_not_found)
-		else
-			@parent_issue_text = "#" + @parent_issue.id.to_s + " - " + @parent_issue.subject
-		end
+		@parent_issues = get_issue_project_parent
 		render :action => 'upload'
 	end
   end
@@ -241,13 +235,13 @@ class MsprojImpController < ApplicationController
   private
   
   def process_tasks(options={}, resume_after)
-	max_items = options[:max_items]
+  	max_items = options[:max_items]
     max_time = options[:max_time]
     imported = 0
-	position = 1
-	if resume_after.nil?
-		resume_after = 0
-	end
+  	position = 1
+  	if resume_after.nil?
+  		resume_after = 0
+  	end
     interrupted = false
     started_on = Time.now
 
@@ -259,46 +253,55 @@ class MsprojImpController < ApplicationController
       if position > resume_after
         #Do import
         imported += 1
-		import(task)
+		    import(task)
       end
-	  position += 1
+	    position += 1
     end
 
     if imported == 0 || !interrupted
       session[:finished] = true
-	else
-		session[:finished] = false
+	  else
+		  session[:finished] = false
     end
-	session[:current] = position - 1
+	  session[:current] = position - 1
   end
   
-  def delete_issues()
-	begin
-		Rails.logger.info("----------------------DELETING ISSUES-------------------")
-		issues = Issue.select(:id).order(id: :desc).where("project_id = ?", @project.id).to_a || []
-		if issues.size > 0
-			Issue.destroy(issues)
-			@project.issues.clear
-			Rails.logger.info("----------------------ALL ISSUES WERE DELETED------------------")
-		end
-		return 0
-	rescue => exception
-		Rails.logger.info("---------------------EXCEPCION------------------------------")
-		flash[:error] = "Error: " + "#{exception.class}: #{exception.exception}"
-		return -1
-	end
+  def delete_issues()    
+  	begin
+  		Rails.logger.info("----------------------DELETING ISSUES-------------------")
+  		if @parent_issue
+  		  logger.info("Parent issue #{@parent_issue.id} found. Delete all subissues.")
+  		  issues = Issue.select(:id).order(id: :desc).where("root_id = ? AND id != ?", @parent_issue.id, @parent_issue.id).to_a || []
+  		  if issues.size > 0
+          Issue.destroy(issues)        
+          Rails.logger.info("----------------------ALL ISSUES BELOW #{@parent_issue.id} WERE DELETED------------------")
+        end
+  		else
+  		  logger.info("No Parent issue selecte. Clean Project")
+  		  @project.issues.clear # just delete the complete project
+  		  Rails.logger.info("----------------------ALL ISSUES IN PROJECT WERE DELETED------------------")
+  		end
+  		
+  		return 0
+  	rescue => exception
+  	  err_msg = "Error: " + "#{exception.class}: #{exception.exception}"
+  		Rails.logger.info("---------------------EXCEPCION------------------------------")
+  		Rails.logger.info(err_msg)
+  		flash[:error] = err_msg
+  		return -1
+  	end
   end
   
   def clear_flash
-	flash.clear
+	 flash.clear
   end
   
   def init_cache
-	tmp_path = Rails.root.join('tmp')
-	unless File.writable? tmp_path.to_s
-		flash[:error] = "Temp-Dir: '" + tmp_path.to_s + "' is not writable!"
-	end
-	@@cache = ActiveSupport::Cache::FileStore.new(Rails.root.join('tmp','msproj_imp').to_s)
+  	tmp_path = Rails.root.join('tmp')
+  	unless File.writable? tmp_path.to_s
+  		flash[:error] = "Temp-Dir: '" + tmp_path.to_s + "' is not writable!"
+  	end
+  	@@cache = ActiveSupport::Cache::FileStore.new(Rails.root.join('tmp','msproj_imp').to_s)
   end
   
   def read_cache
@@ -393,9 +396,9 @@ class MsprojImpController < ApplicationController
 		issue.tracker_id = Setting.plugin_msproject_import['tracker_default']  # 1-Bug, 2-Feature...
 		if task.task_uid > 0
 		  subject = ""
-      subject = @add_IssueSuffix + " " if @add_IssueSuffix
-      subject = subject + task.wbs + " " if @add_wbs2name
-			issue.subject = task.name
+      subject = @@cache.read(:add_IssueSuffix) + " " unless @@cache.read(:add_IssueSuffix).nil?
+      subject = subject + task.wbs + " " unless @@cache.read(:add_wbs2name).nil?
+			issue.subject = subject + task.name
 			assign=@assignments.select{|as| as.task_uid == task.task_uid}.first
 			unless assign.nil? 
 				logger.info("Assign: #{assign}")
@@ -541,10 +544,10 @@ class MsprojImpController < ApplicationController
 	    project = Project.find(params[:project_id]) 
       issues = Issue.visible.where("project_id = ? and issues.parent_id is null", project).to_a || []
       logger.info "Get projects parent issue: #{issues}"
-      if issues && issues.size == 1
-        return issues[0]
+      if issues && issues.size >= 1
+        return issues
       else
-        return
+        return false
       end
 	end
 	

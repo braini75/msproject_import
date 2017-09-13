@@ -30,4 +30,4 @@ en:
   label_erase_issues: "Delete all issues"
   label_parent_issue: "Parent Issue: "
   label_not_not_found: "Not found"
-  label_issues_will_be_erased: "All issues will be eliminated"
+  label_issues_will_be_erased: "issues will be eliminated"

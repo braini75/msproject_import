@@ -5,7 +5,7 @@
 
 	<p>
 		<% if params[:erase_issues] %>
-			<div style="background-color: #FFEB3B;"><h3><%= l(:label_issues_will_be_erased) %></h3></div>
+			<div style="background-color: #FFEB3B;"><h3><%= "#{@issues2delete_count.to_s} " + l(:label_issues_will_be_erased) %></h3></div>
 			<%= hidden_field_tag 'erase_issues', params[:erase_issues] %>
 		<% end %>
 		<p>
