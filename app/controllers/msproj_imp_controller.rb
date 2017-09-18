@@ -119,7 +119,7 @@ class MsprojImpController < ApplicationController
 			end
 		
 			ele.each_element('//Resource') do |child|
-				@resources.push(xml_resources child)
+				@resources.push(xml_resources(child))
 			end
 			logger.info "Ressource passed!"
 		  
@@ -178,7 +178,7 @@ class MsprojImpController < ApplicationController
 						link_to.issue_from_id=task_uid
 						@predecessor_link.push link_to
 					end
-					@tasks.push(xml_tasks child)
+					@tasks.push(xml_tasks(child))
 					if child.elements['OutlineLevel'].text == '0'
 						project_parent_issue = true
 					end
@@ -547,7 +547,7 @@ class MsprojImpController < ApplicationController
       if issues && issues.size >= 1
         return issues
       else
-        return false
+        return []
       end
 	end
 	
