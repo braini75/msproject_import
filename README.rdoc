@@ -28,6 +28,7 @@ To use this Plugin you have to enable the module (Project -> Settings -> Modules
 2. access a redmine project, then click "MS Project Import" tab (Make sure you gave permission to the current user).
 3. select xml file, and click "Analyze" button
 4. If there is any warning, make sure you create and assign missing users to you project and start over
+5. Finally run the import by pressing the "Import"-Button.
 
 == Configuration:
 You can setup permission for "Msproject import"  with the Administration->"Roles and permissions" page. 
