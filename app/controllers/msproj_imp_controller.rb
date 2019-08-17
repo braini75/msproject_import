@@ -5,9 +5,9 @@ class MsprojImpController < ApplicationController
   
   before_action :find_project, :only => [:analyze, :upload, :import_results, :init_run, :run]
   before_action :init_cache, :only => [:analyze, :upload, :import_results]
-  before_filter :read_cache, :only => [:import_results, :status, :init_run, :run]
-  after_filter  :write_cache, :only => [:analyze]
-  after_filter :clear_flash
+  before_action :read_cache, :only => [:import_results, :status, :init_run, :run]
+  after_action  :write_cache, :only => [:analyze]
+  after_action :clear_flash
   
   include MsprojImpHelper  
   

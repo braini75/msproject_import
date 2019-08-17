@@ -1,6 +1,6 @@
 = Redmine-Plugin: XML-Task-Importer MS Project
 == Requirements 
-Redmine 2.x, 3.x
+Redmine 2.x, 3.x, 4.x
 
 == What you get:
 The plugin creates one root-ticket (task) into te current project, which holds the other (sub)tasks as subtickets.
@@ -14,8 +14,9 @@ Task.Name, start_date, finish_date, create_date, duration, done_ratio, priority,
 == Installation
 1) go to `{REDMINE_ROOT}/plugin` directory.
 
-2) Intall:
+2) Install:
   git clone https://github.com/braini75/msproject_import.git
+  RAILS_ENV=production rake redmine:plugins:migrate
 3) Restart the redmine service. E.g. 
   service apache2 restart
 4) enjoy!
@@ -26,6 +27,7 @@ To use this Plugin you have to enable the module (Project -> Settings -> Modules
 
 1. Export your MS Project data to XML
 2. access a redmine project, then click "MS Project Import" tab (Make sure you gave permission to the current user).
+
 3. select xml file, and click "Analyze" button
 4. If there is any warning, make sure you create and assign missing users to you project and start over
 5. Finally run the import by pressing the "Import"-Button.
