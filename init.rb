@@ -1,4 +1,4 @@
-ActionDispatch::Callbacks.to_prepare do
+ActionDispatch::Reloader.to_prepare do
   require 'msproject_import'
 end
 
